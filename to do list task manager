@@ -1,0 +1,103 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_TASKS 100
+#define MAX_LENGTH 50
+
+struct Task {
+    char description[MAX_LENGTH];
+    int completed;
+};
+
+struct Task tasks[MAX_TASKS];
+int numTasks = 0;
+
+void addTask(const char *description) {
+    if (numTasks < MAX_TASKS) {
+        strncpy(tasks[numTasks].description, description, MAX_LENGTH - 1);
+        tasks[numTasks].description[MAX_LENGTH - 1] = '\0';  // Ensure null-termination
+        tasks[numTasks].completed = 0;
+        numTasks++;
+        printf("Task added successfully.\n");
+    } else {
+        printf("Maximum number of tasks reached.\n");
+    }
+}
+
+void completeTask(int index) {
+    if (index >= 0 && index < numTasks) {
+        tasks[index].completed = 1;
+        printf("Task marked as completed.\n");
+    } else {
+        printf("Invalid task index.\n");
+    }
+}
+
+void deleteTask(int index) {
+    if (index >= 0 && index < numTasks) {
+        for (int i = index; i < numTasks - 1; i++) {
+            strcpy(tasks[i].description, tasks[i + 1].description);
+            tasks[i].completed = tasks[i + 1].completed;
+        }
+        numTasks--;
+        printf("Task deleted successfully.\n");
+    } else {
+        printf("Invalid task index.\n");
+    }
+}
+
+void displayTasks() {
+    if (numTasks == 0) {
+        printf("No tasks.\n");
+    } else {
+        printf("Tasks:\n");
+        for (int i = 0; i < numTasks; i++) {
+            printf("%d. [%c] %s\n", i + 1, tasks[i].completed ? 'X' : ' ', tasks[i].description);
+        }
+    }
+}
+
+int main() {
+    int choice, index;
+    char description[MAX_LENGTH];
+
+    do {
+        printf("\nTodo List Manager\n");
+        printf("1. Add Task\n");
+        printf("2. Complete Task\n");
+        printf("3. Delete Task\n");
+        printf("4. Display Tasks\n");
+        printf("5. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                printf("Enter task description: ");
+                scanf(" %[^\n]", description);
+                addTask(description);
+                break;
+            case 2:
+                printf("Enter task index to mark as completed: ");
+                scanf("%d", &index);
+                completeTask(index - 1);
+                break;
+            case 3:
+                printf("Enter task index to delete: ");
+                scanf("%d", &index);
+                deleteTask(index - 1);
+                break;
+            case 4:
+                displayTasks();
+                break;
+            case 5:
+                printf("Exiting program.\n");
+                break;
+            default:
+                printf("Invalid choice.\n");
+        }
+    } while (choice != 5);
+
+    return 0;
+}
